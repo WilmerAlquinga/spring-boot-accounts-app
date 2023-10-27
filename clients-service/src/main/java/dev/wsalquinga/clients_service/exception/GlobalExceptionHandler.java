@@ -1,5 +1,6 @@
 package dev.wsalquinga.clients_service.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
  * @author wsalquinga on 27/10/2023
  */
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
@@ -22,7 +24,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 ex.getMessage(),
                 request.getDescription(false));
-
+        log.error(ex.getMessage() + request.getDescription(false));
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 
@@ -33,7 +35,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 ex.getMessage(),
                 request.getDescription(false));
-
+        log.error(ex.getMessage() + request.getDescription(false));
         return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -51,6 +53,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 validations.toString(),
                 request.getDescription(false));
+        log.error(ex.getMessage() + request.getDescription(false));
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 }
