@@ -48,6 +48,7 @@ public class Client {
             name = "person_id",
             nullable = false
     )
+    @ToString.Exclude
     private Person person;
 
     @Override
