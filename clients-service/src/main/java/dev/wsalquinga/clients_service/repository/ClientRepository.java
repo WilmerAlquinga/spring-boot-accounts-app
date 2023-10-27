@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -17,4 +18,9 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
             "or c.deletedAt > current_timestamp) " +
             "and c.id = :id")
     Optional<Client> findValidById(Long id);
+
+    @Query("select c from Client c " +
+            "where (c.deletedAt is null " +
+            "or c.deletedAt > current_timestamp)")
+    List<Client> findAllValid();
 }
