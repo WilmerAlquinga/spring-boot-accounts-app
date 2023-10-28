@@ -34,7 +34,7 @@ public class OpenAPIConfig {
         License mitLicense = new License().name("MIT License").url("https://choosealicense.com/licenses/mit/");
 
         Info info = new Info()
-                .title("Clients Service API - DEVSU Technical assessment")
+                .title("Clients Service API - Technical assessment")
                 .version("1.0.0")
                 .contact(contact)
                 .description("This API exposes endpoints to manage clients.").termsOfService("")

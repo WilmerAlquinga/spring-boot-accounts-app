@@ -2,6 +2,11 @@ package dev.wsalquinga.clients_service.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -16,6 +21,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@EntityListeners(AuditingEntityListener.class)
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,15 +34,19 @@ public class Client {
     @Column(name = "client_status")
     private Boolean status;
 
+    @CreatedDate
     @Column(name = "client_created_at", nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;
 
+    @CreatedBy
     @Column(name = "client_created_by", nullable = false, length = 128)
     private String createdBy;
 
+    @LastModifiedDate
     @Column(name = "client_updated_at", nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedAt;
 
+    @LastModifiedBy
     @Column(name = "client_updated_by", nullable = false, length = 128)
     private String updatedBy;
 

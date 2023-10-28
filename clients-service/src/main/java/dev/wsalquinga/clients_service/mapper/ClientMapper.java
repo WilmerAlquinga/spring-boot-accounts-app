@@ -17,7 +17,7 @@ public interface ClientMapper {
     @Mapping(source = "person.age", target = "age")
     @Mapping(source = "person.documentNumber", target = "documentNumber")
     @Mapping(source = "person.address", target = "address")
-    @Mapping(source = "person.phone_number", target = "phone_number")
+    @Mapping(source = "person.phoneNumber", target = "phoneNumber")
     ClientDTO toClientDTO(Client client);
 
     List<ClientDTO> toClientDTO(List<Client> client);

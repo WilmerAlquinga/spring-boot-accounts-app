@@ -57,6 +57,7 @@ public class ClientServiceImpl implements ClientService {
                         .age(clientDTO.getAge())
                         .documentNumber(clientDTO.getDocumentNumber())
                         .address(clientDTO.getAddress())
+                        .phoneNumber(clientDTO.getPhoneNumber())
                         .build());
         log.info("Person created: {}", person);
 
