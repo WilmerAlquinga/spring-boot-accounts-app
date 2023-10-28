@@ -32,7 +32,7 @@ public class Account {
     @Column(name = "client_id", nullable = false)
     private Long clientId;
 
-    @Column(name = "account_number", nullable = false, length = 16)
+    @Column(name = "account_number", nullable = false, length = 16, unique = true)
     private String accountNumber;
 
     @Column(name = "account_type", nullable = false, length = 16)
