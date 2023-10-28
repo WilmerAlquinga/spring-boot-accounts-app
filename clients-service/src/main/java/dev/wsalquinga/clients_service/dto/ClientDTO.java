@@ -17,22 +17,23 @@ public class ClientDTO {
 
     private String password;
 
-    @NotNull
+    @NotNull(message = "El estado no puede ser nulo")
     private Boolean status;
 
-    @NotBlank
+    @NotBlank(message = "Nombre no válido")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "Género no válido")
     private String gender;
 
     private Integer age;
 
-    @NotBlank
+    @NotBlank(message = "Número de identificación no válido")
     private String documentNumber;
 
     private String address;
 
-    @Min(9)
+    @NotNull(message = "El número de teléfono es requerido")
+    @Min(value = 9, message = "El número de teléfono debe contener al menos 9 dígitos")
     private String phone_number;
 }
