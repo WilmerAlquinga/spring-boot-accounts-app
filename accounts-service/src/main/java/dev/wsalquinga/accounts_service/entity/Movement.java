@@ -36,10 +36,10 @@ public class Movement {
     @Column(name = "movement_type", nullable = false, length = 16)
     private String movementType;
 
-    @Column(name = "movement_amount", precision = 4)
+    @Column(name = "movement_amount", precision = 2)
     private BigDecimal amount;
 
-    @Column(name = "movement_balance", precision = 4)
+    @Column(name = "movement_balance", precision = 2)
     private BigDecimal balance;
 
     @CreatedDate

@@ -4,6 +4,7 @@ import dev.wsalquinga.accounts_service.dto.req.AccountReqDTO;
 import dev.wsalquinga.accounts_service.dto.res.AccountResDTO;
 import dev.wsalquinga.accounts_service.entity.Account;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -21,4 +22,6 @@ public interface AccountService {
     AccountResDTO update(AccountReqDTO accountReqDTO, Long id);
 
     void delete(Long id);
+
+    void updateBalance(Account account, BigDecimal newBalance);
 }

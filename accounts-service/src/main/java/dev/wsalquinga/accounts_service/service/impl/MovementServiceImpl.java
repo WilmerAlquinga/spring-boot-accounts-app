@@ -2,13 +2,19 @@ package dev.wsalquinga.accounts_service.service.impl;
 
 import dev.wsalquinga.accounts_service.dto.req.MovementReqDTO;
 import dev.wsalquinga.accounts_service.dto.res.MovementResDTO;
+import dev.wsalquinga.accounts_service.entity.Account;
 import dev.wsalquinga.accounts_service.entity.Movement;
+import dev.wsalquinga.accounts_service.exception.ResourceNotFoundException;
 import dev.wsalquinga.accounts_service.mapper.MovementMapper;
 import dev.wsalquinga.accounts_service.repository.MovementRepository;
+import dev.wsalquinga.accounts_service.service.AccountService;
 import dev.wsalquinga.accounts_service.service.MovementService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -19,39 +25,89 @@ import java.util.List;
 public class MovementServiceImpl implements MovementService {
     private final MovementRepository movementRepository;
     private final MovementMapper movementMapper;
+    private final AccountService accountService;
 
-    public MovementServiceImpl(MovementRepository movementRepository, MovementMapper movementMapper) {
+    public MovementServiceImpl(MovementRepository movementRepository, MovementMapper movementMapper, AccountService accountService) {
         this.movementRepository = movementRepository;
         this.movementMapper = movementMapper;
+        this.accountService = accountService;
     }
 
     @Override
     public Movement getMovementById(Long id) {
-        return null;
+        log.info("Find movement by id: {}", id);
+        Movement movement = this.movementRepository.findValidById(id).orElseThrow(
+                () -> new ResourceNotFoundException("No se encontró El Movimiento con el id: " + id)
+        );
+        log.info("Movement retrieved: {}", movement);
+        return movement;
     }
 
     @Override
     public MovementResDTO getById(Long id) {
-        return null;
+        return this.movementMapper.toMovementResDTO(this.getMovementById(id));
     }
 
     @Override
     public List<MovementResDTO> getAll() {
-        return null;
+        List<MovementResDTO> movements = this.movementMapper.toMovementResDTO(this.movementRepository.findAllValid());
+        for (MovementResDTO movement : movements) {
+            movement.setAccount(this.accountService.getById(movement.getAccount().getId()));
+        }
+        return movements;
     }
 
     @Override
+    @Transactional
     public MovementResDTO create(MovementReqDTO movementReqDTO) {
-        return null;
+        Movement movement = this.movementMapper.toMovementEntity(movementReqDTO);
+        Account account = this.accountService.getAccountById(movementReqDTO.getAccountId());
+        BigDecimal totalBalance = account.getBalance().add(movement.getAmount());
+        this.accountService.updateBalance(account, totalBalance);
+        String movementType = "Retiro";
+        // TODO control movements with amount != zero
+        if (movementReqDTO.getAmount().compareTo(BigDecimal.ZERO) >= 0) {
+            movementType = "Depósito";
+        }
+        movement.setAccount(account);
+        movement.setMovementType(movementType);
+        movement.setBalance(totalBalance);
+        movement = this.movementRepository.save(movement);
+        log.info("Movement created: {}", movement);
+        // TODO return complete Movement Response DTO
+        return this.movementMapper.toMovementResDTO(movement);
     }
 
     @Override
+    @Transactional
     public MovementResDTO update(MovementReqDTO movementReqDTO, Long id) {
-        return null;
+        Movement movement = this.getMovementById(id);
+        Account account = movement.getAccount();
+        BigDecimal newBalance = account.getBalance().subtract(movement.getAmount()).add(movementReqDTO.getAmount());
+        this.accountService.updateBalance(account, newBalance);
+        String movementType = "Retiro";
+        // TODO control movements with amount != zero
+        if (movementReqDTO.getAmount().compareTo(BigDecimal.ZERO) >= 0) {
+            movementType = "Depósito";
+        }
+        movement.setMovementType(movementType);
+        movement.setAccount(account);
+        movement.setAmount(movementReqDTO.getAmount());
+        movement.setBalance(newBalance);
+        movement = this.movementRepository.save(movement);
+        log.info("Movement created: {}", movement);
+        // TODO return complete Movement Response DTO
+        return this.movementMapper.toMovementResDTO(movement);
     }
 
     @Override
     public void delete(Long id) {
-
+        Movement movement = this.getMovementById(id);
+        Account account = movement.getAccount();
+        BigDecimal newBalance = account.getBalance().subtract(movement.getAmount());
+        this.accountService.updateBalance(account, newBalance);
+        movement.setDeletedAt(LocalDateTime.now());
+        this.movementRepository.save(movement);
+        log.info("Movement with id: {} successfully deleted", id);
     }
 }

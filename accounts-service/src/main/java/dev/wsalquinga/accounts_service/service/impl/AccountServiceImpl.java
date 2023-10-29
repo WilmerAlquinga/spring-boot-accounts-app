@@ -7,9 +7,11 @@ import dev.wsalquinga.accounts_service.exception.ResourceNotFoundException;
 import dev.wsalquinga.accounts_service.mapper.AccountMapper;
 import dev.wsalquinga.accounts_service.repository.AccountRepository;
 import dev.wsalquinga.accounts_service.service.AccountService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -53,6 +55,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public AccountResDTO create(AccountReqDTO accountReqDTO) {
         log.info("Create account: {}", accountReqDTO.getAccountNumber());
         Account account = this.accountMapper.toAccountEntity(accountReqDTO);
@@ -63,6 +66,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public AccountResDTO update(AccountReqDTO accountReqDTO, Long id) {
         Account account = this.getAccountById(id);
         account.setAccountNumber(accountReqDTO.getAccountNumber());
@@ -79,5 +83,12 @@ public class AccountServiceImpl implements AccountService {
         account.setDeletedAt(LocalDateTime.now());
         this.accountRepository.save(account);
         log.info("Account with id: {} successfully deleted", id);
+    }
+
+    @Override
+    public void updateBalance(Account account, BigDecimal newBalance) {
+        account.setBalance(newBalance);
+        this.accountRepository.save(account);
+        log.info("Account balance updated");
     }
 }

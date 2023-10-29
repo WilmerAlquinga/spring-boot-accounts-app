@@ -1,6 +1,8 @@
 package dev.wsalquinga.accounts_service.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -38,7 +40,8 @@ public class Account {
     @Column(name = "account_type", nullable = false, length = 16)
     private String accountType;
 
-    @Column(name = "account_balance", precision = 4)
+    @Column(name = "account_balance", precision = 2)
+    @DecimalMin(value = "0.00", message = "El Balance de la cuenta no puede ser menor a cero")
     private BigDecimal balance;
 
     @Column(name = "account_status")
