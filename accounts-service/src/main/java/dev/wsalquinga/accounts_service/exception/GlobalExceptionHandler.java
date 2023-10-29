@@ -1,5 +1,6 @@
 package dev.wsalquinga.accounts_service.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(EntityConstraintException.class)
+    public ResponseEntity<ErrorResponse> entityConstraintException(EntityConstraintException ex, WebRequest request) {
+        ErrorResponse message = new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                LocalDateTime.now(),
+                ex.getMessage(),
+                request.getDescription(false));
+        log.error(ex.getMessage() + request.getDescription(false));
+        return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> globalExceptionHandler(Exception ex, WebRequest request) {
         ErrorResponse message = new ErrorResponse(
@@ -40,7 +52,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> onMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponse> validationExceptionHandler(MethodArgumentNotValidException ex, WebRequest request) {
         StringBuilder validations = new StringBuilder();
         int i = 0;
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
@@ -52,6 +64,17 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST.value(),
                 LocalDateTime.now(),
                 validations.toString(),
+                request.getDescription(false));
+        log.error(ex.getMessage() + request.getDescription(false));
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> conflictExceptionHandler(ConstraintViolationException ex, WebRequest request) {
+        ErrorResponse message = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now(),
+                ex.getMessage(),
                 request.getDescription(false));
         log.error(ex.getMessage() + request.getDescription(false));
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);

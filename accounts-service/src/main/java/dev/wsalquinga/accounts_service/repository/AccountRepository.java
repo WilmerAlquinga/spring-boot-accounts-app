@@ -23,4 +23,10 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
             "where (a.deletedAt is null " +
             "or a.deletedAt > current_timestamp)")
     List<Account> findAllValid();
+
+    @Query("select case when COUNT(a) > 0 then TRUE else FALSE end from Account a " +
+            "where (a.deletedAt is null " +
+            "or a.deletedAt > current_timestamp) " +
+            "and a.accountNumber = :accountNumber")
+    boolean existsByAccountNumber(String accountNumber);
 }

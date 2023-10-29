@@ -3,6 +3,7 @@ package dev.wsalquinga.accounts_service.service.impl;
 import dev.wsalquinga.accounts_service.dto.req.AccountReqDTO;
 import dev.wsalquinga.accounts_service.dto.res.AccountResDTO;
 import dev.wsalquinga.accounts_service.entity.Account;
+import dev.wsalquinga.accounts_service.exception.EntityConstraintException;
 import dev.wsalquinga.accounts_service.exception.ResourceNotFoundException;
 import dev.wsalquinga.accounts_service.mapper.AccountMapper;
 import dev.wsalquinga.accounts_service.repository.AccountRepository;
@@ -32,9 +33,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account getAccountById(Long id) {
         log.info("Find account by id: {}", id);
-        Account account = this.accountRepository.findValidById(id).orElseThrow(
-                () -> new ResourceNotFoundException("No se encontró la Cuenta con el id: " + id)
-        );
+        Account account = this.accountRepository.findValidById(id).orElseThrow(() ->
+                new ResourceNotFoundException("No se encontró la Cuenta con el id: " + id));
         log.info("Account retrieved: {}", account);
         return account;
     }
@@ -58,6 +58,7 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public AccountResDTO create(AccountReqDTO accountReqDTO) {
         log.info("Create account: {}", accountReqDTO.getAccountNumber());
+        this.verifyAccountNumber(accountReqDTO.getAccountNumber());
         Account account = this.accountMapper.toAccountEntity(accountReqDTO);
         // TODO add client exists validation
         account = this.accountRepository.save(account);
@@ -69,9 +70,12 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public AccountResDTO update(AccountReqDTO accountReqDTO, Long id) {
         Account account = this.getAccountById(id);
+        if (!account.getAccountNumber().equals(accountReqDTO.getAccountNumber()))
+            this.verifyAccountNumber(accountReqDTO.getAccountNumber());
         account.setAccountNumber(accountReqDTO.getAccountNumber());
         account.setAccountType(accountReqDTO.getAccountType());
         account.setStatus(accountReqDTO.getStatus());
+        account.setBalance(accountReqDTO.getBalance());
         account = this.accountRepository.save(account);
         log.info("Account updated: {}", account);
         return this.accountMapper.toAccountResDTO(account);
@@ -90,5 +94,10 @@ public class AccountServiceImpl implements AccountService {
         account.setBalance(newBalance);
         this.accountRepository.save(account);
         log.info("Account balance updated");
+    }
+
+    public void verifyAccountNumber(String accountNumber) {
+        if (this.accountRepository.existsByAccountNumber(accountNumber))
+            throw new EntityConstraintException("Ya existe una Cuenta con el número: " + accountNumber);
     }
 }

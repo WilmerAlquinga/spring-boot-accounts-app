@@ -90,10 +90,11 @@ public class MovementServiceImpl implements MovementService {
         if (movementReqDTO.getAmount().compareTo(BigDecimal.ZERO) >= 0) {
             movementType = "Depósito";
         }
-        movement.setMovementType(movementType);
-        movement.setAccount(account);
         movement.setAmount(movementReqDTO.getAmount());
         movement.setBalance(newBalance);
+        movement.setMovementType(movementType);
+        movement.setDate(movementReqDTO.getDate());
+        movement.setAccount(account);
         movement = this.movementRepository.save(movement);
         log.info("Movement created: {}", movement);
         // TODO return complete Movement Response DTO

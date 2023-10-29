@@ -5,9 +5,10 @@ CREATE TABLE account
 (
     account_id         SERIAL      NOT NULL,
     client_id          INT4        NOT NULL,
-    account_number     VARCHAR(16) NOT NULL,
+    account_number     VARCHAR(16) NOT NULL UNIQUE,
     account_type       VARCHAR(16) NULL,
-    account_balance    DECIMAL(12, 2),
+    account_balance    NUMERIC(12, 2)
+        CONSTRAINT CKC_BALANCE_TEST CHECK (account_balance >= 0.00),
     account_status     BOOL DEFAULT FALSE,
     account_created_at TIMESTAMP,
     account_created_by VARCHAR(128),
@@ -29,8 +30,8 @@ CREATE TABLE movement
     account_id          INT4           NOT NULL,
     movement_date       TIMESTAMP      NOT NULL,
     movement_type       VARCHAR(16)    NOT NULL,
-    movement_amount     DECIMAL(12, 2) NOT NULL,
-    movement_balance    DECIMAL(12, 2) NOT NULL,
+    movement_amount     NUMERIC(12, 2) NOT NULL,
+    movement_balance    NUMERIC(12, 2) NOT NULL,
     movement_created_at TIMESTAMP,
     movement_created_by VARCHAR(128),
     movement_updated_at TIMESTAMP,
