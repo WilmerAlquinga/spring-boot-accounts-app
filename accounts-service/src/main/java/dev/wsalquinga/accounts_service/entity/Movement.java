@@ -16,12 +16,12 @@ import java.util.Objects;
  * @author wsalquinga on 27/10/2023
  */
 @Entity
-@Table(name = "movement")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Table(name = "movement", schema = "accounts")
 @EntityListeners(AuditingEntityListener.class)
 public class Movement {
     @Id
@@ -36,10 +36,10 @@ public class Movement {
     @Column(name = "movement_type", nullable = false, length = 16)
     private String movementType;
 
-    @Column(name = "movement_amount", precision = 2)
+    @Column(name = "movement_amount", nullable = false, precision = 2)
     private BigDecimal amount;
 
-    @Column(name = "movement_balance", precision = 2)
+    @Column(name = "movement_balance", nullable = false, precision = 2)
     private BigDecimal balance;
 
     @CreatedDate

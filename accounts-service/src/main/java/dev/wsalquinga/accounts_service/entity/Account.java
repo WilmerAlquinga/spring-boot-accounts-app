@@ -18,12 +18,12 @@ import java.util.Objects;
  * @author wsalquinga on 27/10/2023
  */
 @Entity
-@Table(name = "account")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Table(name = "account", schema = "accounts")
 @EntityListeners(AuditingEntityListener.class)
 public class Account {
     @Id
