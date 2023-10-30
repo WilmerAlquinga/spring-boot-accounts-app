@@ -64,13 +64,7 @@ public class MovementServiceImpl implements MovementService {
         Account account = this.accountService.getAccountById(movementReqDTO.getAccountId());
         BigDecimal totalBalance = account.getBalance().add(movement.getAmount());
         this.accountService.updateBalance(account, totalBalance);
-        String movementType = "Retiro";
-        // TODO control movements with amount != zero
-        if (movementReqDTO.getAmount().compareTo(BigDecimal.ZERO) >= 0) {
-            movementType = "Depósito";
-        }
         movement.setAccount(account);
-        movement.setMovementType(movementType);
         movement.setBalance(totalBalance);
         movement = this.movementRepository.save(movement);
         log.info("Movement created: {}", movement);
@@ -85,14 +79,8 @@ public class MovementServiceImpl implements MovementService {
         Account account = movement.getAccount();
         BigDecimal newBalance = account.getBalance().subtract(movement.getAmount()).add(movementReqDTO.getAmount());
         this.accountService.updateBalance(account, newBalance);
-        String movementType = "Retiro";
-        // TODO control movements with amount != zero
-        if (movementReqDTO.getAmount().compareTo(BigDecimal.ZERO) >= 0) {
-            movementType = "Depósito";
-        }
         movement.setAmount(movementReqDTO.getAmount());
         movement.setBalance(newBalance);
-        movement.setMovementType(movementType);
         movement.setDate(movementReqDTO.getDate());
         movement.setAccount(account);
         movement = this.movementRepository.save(movement);

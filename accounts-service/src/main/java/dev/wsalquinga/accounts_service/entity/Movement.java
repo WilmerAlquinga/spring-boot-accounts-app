@@ -69,6 +69,16 @@ public class Movement {
     @ToString.Exclude
     private Account account;
 
+    @PrePersist
+    @PreUpdate
+    public void establishMovementType() {
+        String movementType = "Retiro";
+        if (this.getAmount().compareTo(BigDecimal.ZERO) >= 0) {
+            movementType = "Depósito";
+        }
+        this.setMovementType(movementType);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

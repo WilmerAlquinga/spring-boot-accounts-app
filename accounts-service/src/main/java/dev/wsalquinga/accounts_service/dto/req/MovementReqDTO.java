@@ -25,10 +25,6 @@ public class MovementReqDTO {
     @NotNull(message = "Valor es requerido")
     private BigDecimal amount;
 
-    private BigDecimal balance;
-
-    @NotNull(message = "ID de cuenta es requerido")
+    @NotNull(message = "ID Cuenta es requerido")
     private Long accountId;
-
-    private String accountNumber;
 }
