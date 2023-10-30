@@ -2,6 +2,7 @@ package dev.wsalquinga.clients_service.controller;
 
 import dev.wsalquinga.clients_service.common.GlobalConstant;
 import dev.wsalquinga.clients_service.dto.ClientDTO;
+import dev.wsalquinga.clients_service.dto.projection.ClientProjectionDTO;
 import dev.wsalquinga.clients_service.service.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -59,5 +60,17 @@ public class ClientController {
     public ResponseEntity<Void> delete(@PathVariable(name = "clientId") Long id) {
         this.clientService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/get-name/{clientId}")
+    @Operation(summary = "Get valid Name of Client by client ID", tags = {"clients", "get"})
+    public ResponseEntity<ClientProjectionDTO> findNameById(@PathVariable(name = "clientId") Long id) {
+        return ResponseEntity.ok(this.clientService.getNameById(id));
+    }
+
+    @GetMapping("/get-names/{clientIds}")
+    @Operation(summary = "Get valid Names of Clients by client IDs", tags = {"clients", "get"})
+    public ResponseEntity<List<ClientProjectionDTO>> findNamesByIds(@PathVariable(name = "clientIds") List<Long> ids) {
+        return ResponseEntity.ok(this.clientService.getNamesByIds(ids));
     }
 }
