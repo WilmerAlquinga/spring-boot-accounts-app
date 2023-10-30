@@ -64,6 +64,7 @@ public class AccountServiceImpl implements AccountService {
     public List<AccountResDTO> getAll() {
         log.info("Find all accounts");
         List<Account> accounts = this.accountRepository.findAllValid();
+        if (accounts.isEmpty()) return new ArrayList<>();
         log.info("Accounts: {}", accounts.size());
         String clientIds = accounts.stream().map(account -> account.getClientId() + "")
                 .collect(Collectors.joining(","));
