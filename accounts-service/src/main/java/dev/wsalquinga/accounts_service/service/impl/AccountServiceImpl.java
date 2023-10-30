@@ -67,15 +67,8 @@ public class AccountServiceImpl implements AccountService {
         log.info("Accounts: {}", accounts.size());
         String clientIds = accounts.stream().map(account -> account.getClientId() + "")
                 .collect(Collectors.joining(","));
-        ParameterizedTypeReference<List<ClientDTO>> typeReference = new ParameterizedTypeReference<>() {
-        };
-        List<ClientDTO> clients = this.webClient.webClient()
-                .get()
-                .uri(GlobalConstant.CLIENTS_SERVICE_URI + "/get-names/" + clientIds)
-                .retrieve()
-                .bodyToMono(typeReference)
-                .block();
 
+        List<ClientDTO> clients = this.getClientsByIdsFromClientService(clientIds);
         // Return only accounts with valid Clients
         List<AccountResDTO> validAccounts = new ArrayList<>();
         if (clients == null || clients.isEmpty()) return validAccounts;
@@ -141,16 +134,8 @@ public class AccountServiceImpl implements AccountService {
         log.info("Account balance updated");
     }
 
-    private void verifyAccountNumber(String accountNumber) {
-        if (this.accountRepository.existsByAccountNumber(accountNumber))
-            throw new EntityConstraintException("Ya existe una Cuenta con el número: " + accountNumber);
-    }
-
-    private void verifyInsufficientBalance(BigDecimal balance) {
-        if (balance.compareTo(BigDecimal.ZERO) < 0) throw new EntityConstraintException("Saldo no disponible");
-    }
-
-    private ClientDTO getClientByIdFromClientsService(Long clientId) {
+    @Override
+    public ClientDTO getClientByIdFromClientsService(Long clientId) {
         return this.webClient.webClient()
                 .get()
                 .uri(GlobalConstant.CLIENTS_SERVICE_URI + "/get-name/" + clientId)
@@ -163,5 +148,27 @@ public class AccountServiceImpl implements AccountService {
                 })
                 .bodyToMono(ClientDTO.class)
                 .block();
+    }
+
+    @Override
+    public List<ClientDTO> getClientsByIdsFromClientService(String ids) {
+        ParameterizedTypeReference<List<ClientDTO>> typeReference = new ParameterizedTypeReference<>() {
+        };
+
+        return this.webClient.webClient()
+                .get()
+                .uri(GlobalConstant.CLIENTS_SERVICE_URI + "/get-names/" + ids)
+                .retrieve()
+                .bodyToMono(typeReference)
+                .block();
+    }
+
+    private void verifyAccountNumber(String accountNumber) {
+        if (this.accountRepository.existsByAccountNumber(accountNumber))
+            throw new EntityConstraintException("Ya existe una Cuenta con el número: " + accountNumber);
+    }
+
+    private void verifyInsufficientBalance(BigDecimal balance) {
+        if (balance.compareTo(BigDecimal.ZERO) < 0) throw new EntityConstraintException("Saldo no disponible");
     }
 }

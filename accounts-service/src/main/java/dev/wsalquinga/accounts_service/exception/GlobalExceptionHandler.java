@@ -52,6 +52,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(MalformedRequestException.class)
+    public ResponseEntity<ErrorResponse> entityConstraintException(MalformedRequestException ex, WebRequest request) {
+        ErrorResponse message = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now(),
+                ex.getMessage(),
+                request.getDescription(false));
+        log.error(ex.getMessage() + request.getDescription(false));
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> globalExceptionHandler(Exception ex, WebRequest request) {
         ErrorResponse message = new ErrorResponse(

@@ -27,19 +27,19 @@ public class MovementController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all valid Movements", tags = {"movements", "get"})
+    @Operation(summary = "Get all valid Movements")
     public ResponseEntity<List<MovementResDTO>> listAll() {
         return ResponseEntity.ok(this.movementService.getAll());
     }
 
     @GetMapping("/{movementId}")
-    @Operation(summary = "Get valid Movement by movement ID", tags = {"movements", "get"})
+    @Operation(summary = "Get valid Movement by movement ID")
     public ResponseEntity<MovementResDTO> findById(@PathVariable(name = "movementId") Long id) {
         return ResponseEntity.ok(this.movementService.getById(id));
     }
 
     @PostMapping
-    @Operation(summary = "Create a new Movement", tags = {"movements", "post"})
+    @Operation(summary = "Create a new Movement")
     public ResponseEntity<MovementResDTO> create(
             @Valid @RequestBody MovementReqDTO movementReqDTO
     ) {
@@ -47,7 +47,7 @@ public class MovementController {
     }
 
     @PutMapping("/{movementId}")
-    @Operation(summary = "Update existing Movement by ID", tags = {"movements", "put"})
+    @Operation(summary = "Update existing Movement by ID")
     public ResponseEntity<MovementResDTO> update(
             @PathVariable(name = "movementId") Long id,
             @Valid @RequestBody MovementReqDTO movementReqDTO
@@ -56,7 +56,7 @@ public class MovementController {
     }
 
     @DeleteMapping("/{movementId}")
-    @Operation(summary = "Delete Movement by movement ID", tags = {"movements", "delete"})
+    @Operation(summary = "Delete Movement by movement ID")
     public ResponseEntity<Void> delete(@PathVariable(name = "movementId") Long id) {
         this.movementService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -27,19 +27,19 @@ public class AccountController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all valid Accounts", tags = {"accounts", "get"})
+    @Operation(summary = "Get all valid Accounts")
     public ResponseEntity<List<AccountResDTO>> listAll() {
         return ResponseEntity.ok(this.accountService.getAll());
     }
 
     @GetMapping("/{accountId}")
-    @Operation(summary = "Get valid Account by account ID", tags = {"accounts", "get"})
+    @Operation(summary = "Get valid Account by account ID")
     public ResponseEntity<AccountResDTO> findById(@PathVariable(name = "accountId") Long id) {
         return ResponseEntity.ok(this.accountService.getById(id));
     }
 
     @PostMapping
-    @Operation(summary = "Create a new Account", tags = {"accounts", "post"})
+    @Operation(summary = "Create a new Account")
     public ResponseEntity<AccountResDTO> create(
             @Valid @RequestBody AccountReqDTO accountReqDTO
     ) {
@@ -47,7 +47,7 @@ public class AccountController {
     }
 
     @PutMapping("/{accountId}")
-    @Operation(summary = "Update existing Account by ID", tags = {"accounts", "put"})
+    @Operation(summary = "Update existing Account by ID")
     public ResponseEntity<AccountResDTO> update(
             @PathVariable(name = "accountId") Long id,
             @Valid @RequestBody AccountReqDTO accountReqDTO
@@ -56,7 +56,7 @@ public class AccountController {
     }
 
     @DeleteMapping("/{accountId}")
-    @Operation(summary = "Delete Account by account ID", tags = {"accounts", "delete"})
+    @Operation(summary = "Delete Account by account ID")
     public ResponseEntity<Void> delete(@PathVariable(name = "accountId") Long id) {
         this.accountService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

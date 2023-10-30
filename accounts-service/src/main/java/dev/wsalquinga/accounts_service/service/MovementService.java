@@ -1,9 +1,13 @@
 package dev.wsalquinga.accounts_service.service;
 
 import dev.wsalquinga.accounts_service.dto.req.MovementReqDTO;
+import dev.wsalquinga.accounts_service.dto.res.MovementReportResDTO;
 import dev.wsalquinga.accounts_service.dto.res.MovementResDTO;
 import dev.wsalquinga.accounts_service.entity.Movement;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -21,4 +25,6 @@ public interface MovementService {
     MovementResDTO update(MovementReqDTO movementReqDTO, Long id);
 
     void delete(Long id);
+
+    Page<MovementReportResDTO> getAllByClientIdAndBetweenDates(Long clientId, LocalDate from, LocalDate to, Pageable pageable);
 }
