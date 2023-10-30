@@ -113,6 +113,7 @@ public class MovementServiceImpl implements MovementService {
             throw new MalformedRequestException("La fecha desde no puede ser mayor a la fecha hasta");
         Page<MovementReportResDTO> movements = this.movementRepository.findByClientIdAndBetweenDates(clientId, dateFrom, dateTo, pageable)
                 .map(this.movementMapper::toMovementReportResDTO);
+        if (movements.isEmpty()) return movements;
         ClientDTO client = this.accountService.getClientByIdFromClientsService(clientId);
         for (MovementReportResDTO movement : movements) {
             movement.setName(client.getName());
