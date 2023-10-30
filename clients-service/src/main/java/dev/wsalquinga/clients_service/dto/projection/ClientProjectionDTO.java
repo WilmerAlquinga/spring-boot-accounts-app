@@ -13,5 +13,5 @@ public class ClientProjectionDTO {
     private Long id;
 
     @Value("#{target.person.name}")
-    private String clientName;
+    private String name;
 }

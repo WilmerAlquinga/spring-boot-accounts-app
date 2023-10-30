@@ -8,4 +8,5 @@ import java.time.format.DateTimeFormatter;
 public class GlobalConstant {
     public static final String API_V1_VERSION = "/api/v1";
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+    public static final String CLIENTS_SERVICE_URI = "/clients";
 }

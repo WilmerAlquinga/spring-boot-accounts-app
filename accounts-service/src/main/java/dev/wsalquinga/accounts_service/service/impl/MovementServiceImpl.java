@@ -90,6 +90,7 @@ public class MovementServiceImpl implements MovementService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         Movement movement = this.getMovementById(id);
         Account account = movement.getAccount();
