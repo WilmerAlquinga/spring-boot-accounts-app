@@ -1,5 +1,6 @@
 package dev.wsalquinga.accounts_service.service;
 
+import dev.wsalquinga.accounts_service.dto.ClientDTO;
 import dev.wsalquinga.accounts_service.dto.req.AccountReqDTO;
 import dev.wsalquinga.accounts_service.dto.res.AccountResDTO;
 import dev.wsalquinga.accounts_service.entity.Account;
@@ -24,4 +25,8 @@ public interface AccountService {
     void delete(Long id);
 
     void updateBalance(Account account, BigDecimal newBalance);
+
+    ClientDTO getClientByIdFromClientsService(Long clientId);
+
+    List<ClientDTO> getClientsByIdsFromClientService(String ids);
 }

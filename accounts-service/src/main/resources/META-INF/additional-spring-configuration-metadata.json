@@ -4,5 +4,10 @@
       "name": "wsalquinga.openapi.local-url",
       "type": "java.lang.String",
       "description": "Description for wsalquinga.openapi.local-url."
-  }
-] }
+    },
+    {
+      "name": "clients-service-url.base.url",
+      "type": "java.lang.String",
+      "description": "Description for clients-service-url.base.url."
+    }
+  ] }

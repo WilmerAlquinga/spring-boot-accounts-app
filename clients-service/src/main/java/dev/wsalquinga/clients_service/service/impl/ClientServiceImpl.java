@@ -1,6 +1,7 @@
 package dev.wsalquinga.clients_service.service.impl;
 
 import dev.wsalquinga.clients_service.dto.ClientDTO;
+import dev.wsalquinga.clients_service.dto.projection.ClientProjectionDTO;
 import dev.wsalquinga.clients_service.entity.Client;
 import dev.wsalquinga.clients_service.entity.Person;
 import dev.wsalquinga.clients_service.exception.ResourceNotFoundException;
@@ -95,5 +96,16 @@ public class ClientServiceImpl implements ClientService {
         client.setDeletedAt(LocalDateTime.now());
         this.clientRepository.save(client);
         log.info("Client with id: {} successfully deleted", id);
+    }
+
+    @Override
+    public ClientProjectionDTO getNameById(Long id) {
+        return this.clientRepository.findNameById(id).orElseThrow(
+                () -> new ResourceNotFoundException("No se encontró el Cliente con id: " + id));
+    }
+
+    @Override
+    public List<ClientProjectionDTO> getNamesByIds(List<Long> ids) {
+        return this.clientRepository.findNamesByIds(ids);
     }
 }

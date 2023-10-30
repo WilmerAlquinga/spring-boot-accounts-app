@@ -1,9 +1,12 @@
 package dev.wsalquinga.accounts_service.service.impl;
 
+import dev.wsalquinga.accounts_service.dto.ClientDTO;
 import dev.wsalquinga.accounts_service.dto.req.MovementReqDTO;
+import dev.wsalquinga.accounts_service.dto.res.MovementReportResDTO;
 import dev.wsalquinga.accounts_service.dto.res.MovementResDTO;
 import dev.wsalquinga.accounts_service.entity.Account;
 import dev.wsalquinga.accounts_service.entity.Movement;
+import dev.wsalquinga.accounts_service.exception.MalformedRequestException;
 import dev.wsalquinga.accounts_service.exception.ResourceNotFoundException;
 import dev.wsalquinga.accounts_service.mapper.MovementMapper;
 import dev.wsalquinga.accounts_service.repository.MovementRepository;
@@ -11,9 +14,12 @@ import dev.wsalquinga.accounts_service.service.AccountService;
 import dev.wsalquinga.accounts_service.service.MovementService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -68,7 +74,6 @@ public class MovementServiceImpl implements MovementService {
         movement.setBalance(totalBalance);
         movement = this.movementRepository.save(movement);
         log.info("Movement created: {}", movement);
-        // TODO return complete Movement Response DTO
         return this.movementMapper.toMovementResDTO(movement);
     }
 
@@ -85,11 +90,11 @@ public class MovementServiceImpl implements MovementService {
         movement.setAccount(account);
         movement = this.movementRepository.save(movement);
         log.info("Movement created: {}", movement);
-        // TODO return complete Movement Response DTO
         return this.movementMapper.toMovementResDTO(movement);
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         Movement movement = this.getMovementById(id);
         Account account = movement.getAccount();
@@ -98,5 +103,21 @@ public class MovementServiceImpl implements MovementService {
         movement.setDeletedAt(LocalDateTime.now());
         this.movementRepository.save(movement);
         log.info("Movement with id: {} successfully deleted", id);
+    }
+
+    @Override
+    public Page<MovementReportResDTO> getAllByClientIdAndBetweenDates(Long clientId, LocalDate from, LocalDate to, Pageable pageable) {
+        LocalDateTime dateFrom = from.atStartOfDay();
+        LocalDateTime dateTo = to.atTime(23, 59, 59);
+        if (dateTo.isBefore(dateFrom))
+            throw new MalformedRequestException("La fecha desde no puede ser mayor a la fecha hasta");
+        Page<MovementReportResDTO> movements = this.movementRepository.findByClientIdAndBetweenDates(clientId, dateFrom, dateTo, pageable)
+                .map(this.movementMapper::toMovementReportResDTO);
+        ClientDTO client = this.accountService.getClientByIdFromClientsService(clientId);
+        for (MovementReportResDTO movement : movements) {
+            movement.setName(client.getName());
+            movement.setInitialBalance(movement.getAvailableBalance().subtract(movement.getAmount()));
+        }
+        return movements;
     }
 }
