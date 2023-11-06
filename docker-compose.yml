@@ -11,23 +11,25 @@ services:
       MYSQL_DATABASE: clients
     ports:
       - "3306:3306"
-    expose:
-      - 3306
     restart: on-failure
     networks:
       - microservices-net
 
   # Clients Microservice
   clients-service:
+    container_name: clients-service
     build:
       context: ./clients-service
       dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    volumes:
+      - ./clients-service/src/main/resources/application-docker.properties:/app/application-docker.properties
     ports:
       - "8080:8080"
-    expose:
-      - 8080
     depends_on:
       - mysql8-db
+    restart: on-failure
     networks:
       - microservices-net
 
@@ -48,17 +50,24 @@ services:
 
   # Accounts Microservice
   accounts-service:
+    container_name: accounts-service
     build:
       context: ./accounts-service
       dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    volumes:
+      - ./accounts-service/src/main/resources/application-docker.properties:/app/application-docker.properties
     ports:
       - "9090:9090"
     depends_on:
       - postgres16-db
       - clients-service
+    restart: on-failure
     networks:
       - microservices-net
 
 networks:
   microservices-net:
+    name: microservices-net
     driver: bridge
